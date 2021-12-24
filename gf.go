@@ -134,7 +134,7 @@ func (p GF28) transform() GF28 {
 	c := GF28(63)
 	for i := 0; i < 8; i++ {
 		tmp := (p & (1 << i)) ^ (p & (1 << ((i + 4) % 8))) ^ (p & (1 << ((i + 5) % 8))) ^ (p & (1 << ((i + 6) % 8))) ^ (p & (1 << ((i + 7) % 8))) ^ (c & (1 << i))
-		res ^= (tmp << i)
+		res += (tmp << i)
 	}
 	return res
 }
