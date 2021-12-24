@@ -1,5 +1,9 @@
 package math2
 
+import (
+	"fmt"
+)
+
 type GF28 byte
 
 type GF interface {
@@ -84,10 +88,7 @@ func (p GF28) PolyDivide(q GF28) GF28 {
 //[1,P(x),0,M(x)] -> [1,P(x),-Q(x),R(x)] -> [1,P(x),Q(x),R(x)]
 
 func (p GF28) Inverse() GF28 {
-	if p == 0x0 {
-		panic("zero has no inverse")
-	}
-	if p == 0x1 {
+	if p == 0x0 || p == 0x1 {
 		return p
 	}
 	_m := 0x11B
@@ -110,13 +111,42 @@ func (p GF28) Inverse() GF28 {
 	return x1
 }
 
-func GF28InverseTable() [][]GF28 {
-	table := [][]GF28{}
+func GF28InverseTable() [16][16]GF28 {
+	table := [16][16]GF28{}
 	for i := 0; i < 16; i++ {
 		for j := 0; j < 16; j++ {
 			table[i][j] = GF28(((i << 4) & 0xf0) ^ (j & 0xf))
 			table[i][j] = table[i][j].Inverse()
 		}
+	}
+	/*
+		for _, i := range table {
+			for _, v := range i {
+				fmt.Printf("%x ", v)
+			}
+			fmt.Println()
+		}*/
+	return table
+}
+
+func (p GF28) transform() GF28 {
+	res := GF28(0)
+	c := GF28(63)
+	for i := 0; i < 8; i++ {
+		tmp := (p & (1 << i)) ^ (p & (1 << ((i + 4) % 8))) ^ (p & (1 << ((i + 5) % 8))) ^ (p & (1 << ((i + 6) % 8))) ^ (p & (1 << ((i + 7) % 8))) ^ (c & (1 << i))
+		res ^= (tmp << i)
+	}
+	return res
+}
+
+func GetSbox() [16][16]GF28 {
+	table := GF28InverseTable()
+	for _, i := range table {
+		for _, v := range i {
+			v = v.transform()
+			fmt.Printf("%x ", v)
+		}
+		fmt.Println()
 	}
 	return table
 }
