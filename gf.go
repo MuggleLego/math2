@@ -111,6 +111,10 @@ func (p GF28) Inverse() GF28 {
 	return x1
 }
 
+func (p GF28) Divide(q GF28) GF28 {
+	return p.Multiply(q.Inverse())
+}
+
 func GF28InverseTable() [16][16]GF28 {
 	table := [16][16]GF28{}
 	for i := 0; i < 16; i++ {
