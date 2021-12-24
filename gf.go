@@ -139,7 +139,7 @@ func (p GF28) getDigit(i int, n int) GF28 {
 
 func (p GF28) transform() GF28 {
 	res := GF28(0x0)
-	c := GF28(63)
+	c := GF28(0x63)
 	for i := 0; i < 8; i++ {
 		p_i := p.getDigit(i, 0) ^ p.getDigit(i, 4) ^ p.getDigit(i, 5) ^ p.getDigit(i, 6) ^ p.getDigit(i, 7) ^ c.getDigit(i, 0)
 		res += p_i << i
