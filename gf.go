@@ -129,12 +129,16 @@ func GF28InverseTable() [16][16]GF28 {
 	return table
 }
 
+func (p GF28) getDigit(n int) GF28 {
+	return GF28(p & (1 << n))
+}
+
 func (p GF28) transform() GF28 {
 	res := GF28(0)
 	c := GF28(63)
 	for i := 0; i < 8; i++ {
-		tmp := (p & (1 << i)) ^ (p & (1 << ((i + 4) % 8))) ^ (p & (1 << ((i + 5) % 8))) ^ (p & (1 << ((i + 6) % 8))) ^ (p & (1 << ((i + 7) % 8))) ^ (c & (1 << i))
-		res += (tmp << i)
+		p_i := p.getDigit(i) ^ p.getDigit((i<<4)%8) ^ p.getDigit((i<<5)%8) ^ p.getDigit((i<<6)%8) ^ p.getDigit((i<<7)%8) ^ c.getDigit(i)
+		res += p_i << i
 	}
 	return res
 }
